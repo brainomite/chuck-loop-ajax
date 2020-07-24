@@ -44,12 +44,21 @@
         request.send();
       }
 
+      const newDataCB = (response) => {
+        console.log(response);
+        $("#robot-list").append(
+          `<li><img style="height: 10vh;" src="${response.robot}" alt="a robot"></li>`
+        );
+      };
+
+      const doneCB = () => window.alert("No more robots!");
       $(document).ready(() => {
         $("#button").click(() => {
-          $("#robot-list").append(
-            `<li><img style="height: 15vh;" src="https://robohash.org/${Date.now()}" alt="a robot"></li>`
-          );
-          // pollForNewData
+          // $("#robot-list").append(
+          //   `<li><img style="height: 15vh;" src="https://robohash.org/${Date.now()}" alt="a robot"></li>`
+          // );
+          const url = "https://chuck-loop-ajax.herokuapp.com/robots";
+          pollForNewData(url, 500, newDataCB, doneCB);
         });
       });
     </script>

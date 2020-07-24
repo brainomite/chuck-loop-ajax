@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function pollForNewData(
+        sURL,
+        pollDelayInMS,
+        fNewDataCallBack,
+        fDoneCallBack
+      ) {
+        var request = new XMLHttpRequest();
+        //  request we will be doing
+        request.open("GET", sURL);
+
+        // callback when data is loaded
+        request.onload = function () {
+          // I assumed that the data is a JSON transmission, lets make it a native JS
+          // Object
+          var responseObj = JSON.parse(request.responseText);
+          if (responseObj.done === true) {
+            // if done is true lets invoke the done callback
+            fDoneCallBack();
+          } else {
+            // if its not done, lets invoke new data callback with the response object
+            fNewDataCallBack(responseObj);
+            // we want to run the process again! but wait pollDelayInMS milliseconds.
+            setTimeout(function () {
+              pollForNewData(
+                sURL,
+                pollDelayInMS,
+                fNewDataCallBack,
+                fDoneCallBack
+              );
+            }, pollDelayInMS);
+          }
+        };
+        // let kick off the process.
+        request.send();
+      }
+
+      $(document).ready(() => {
+        $("#button").click(() => {
+          $("#robot-list").append(
+            `<li><img style="height: 15vh;" src="https://robohash.org/${Date.now()}" alt="a robot"></li>`
+          );
+          // pollForNewData
+        });
+      });
+    </script>
+    <h1>Robot Gatherer!</h1>
+    <h2>List of robots:</h2>
+    <ol id="robot-list">
+      <!-- <li><img src="https://robohash.org/1321" alt="a robot" /></li> -->
+    </ol>
+    <button id="button">Gather a random set of robots</button>
+  </body>
+</html>

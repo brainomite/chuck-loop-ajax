@@ -45,19 +45,33 @@
       }
 
       const newDataCB = (response) => {
+        // this function does two things, it'll log the response obj to the
+        // browser debugger tool and it'll append a new robot
         console.log(response);
         $("#robot-list").append(
           `<li><img style="height: 10vh;" src="${response.robot}" alt="a robot"></li>`
         );
       };
 
+      // this done callback for sake of expediency just does a windows.alert
       const doneCB = () => window.alert("No more robots!");
+
       $(document).ready(() => {
         $("#button").click(() => {
           // $("#robot-list").append(
           //   `<li><img style="height: 15vh;" src="https://robohash.org/${Date.now()}" alt="a robot"></li>`
           // );
           const url = "https://chuck-loop-ajax.herokuapp.com/robots";
+
+          // here is the kickoff of the function you requested
+
+          // url = url we are sending a 'GET' request to
+          // 500 = MS i wanted to wait between polling
+          // newDataCB = function that will be invoked (notice it isn't invoked now)
+          //             when there is new robots and we aint done
+          // doneCB = function (not invoked) that will be invoked when we
+          //          receive from the server {"done": true}
+
           pollForNewData(url, 500, newDataCB, doneCB);
         });
       });

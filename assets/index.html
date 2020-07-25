@@ -8,6 +8,20 @@
   </head>
   <body>
     <script>
+      /**
+       * This function when invoked will poll a url every x MS, and
+       * when there is new data, invoke a new data callback (a function that would
+       * react to the new data. i.e displaying on a webpage)
+       * when there is no new data (done) invoke a done callback (a function that may
+       * do anything but an idea would be to stop a loading indicator)
+       *
+       * @param {string} sURL - A URL from where to "GET" the data from
+       * @param {integer} pollDelayInMS - after how many ms should we check again?
+       * @param {function} fNewDataCallBack - a function that will be passed a object
+       *                                      representing the JSON response
+       * @param {function} fDoneCallBack - a function that will be invoked if we see
+       *                                 - done === true
+       */
       function pollForNewData(
         sURL,
         pollDelayInMS,
@@ -58,10 +72,7 @@
 
       $(document).ready(() => {
         $("#button").click(() => {
-          // $("#robot-list").append(
-          //   `<li><img style="height: 15vh;" src="https://robohash.org/${Date.now()}" alt="a robot"></li>`
-          // );
-          const url = "https://chuck-loop-ajax.herokuapp.com/robots";
+          const url = "http://127.0.0.1:4000/robots";
 
           // here is the kickoff of the function you requested
 
@@ -71,16 +82,13 @@
           //             when there is new robots and we aint done
           // doneCB = function (not invoked) that will be invoked when we
           //          receive from the server {"done": true}
-
           pollForNewData(url, 500, newDataCB, doneCB);
         });
       });
     </script>
     <h1>Robot Gatherer!</h1>
     <h2>List of robots:</h2>
-    <ol id="robot-list">
-      <!-- <li><img src="https://robohash.org/1321" alt="a robot" /></li> -->
-    </ol>
+    <ol id="robot-list"></ol>
     <button id="button">Gather a random set of robots</button>
   </body>
 </html>

@@ -26,5 +26,8 @@ app.get("/robots", (_, res) => {
 });
 
 const port = process.env.PORT || 4000;
-const onListen = () => console.log("Running on port " + port);
+const onListen = () => {
+  console.log("Running on port " + port);
+  console.log("connect to http://127.0.0.1:4000/");
+};
 app.listen(port, onListen);

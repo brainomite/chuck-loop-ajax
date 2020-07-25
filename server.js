@@ -2,6 +2,8 @@
 const path = require("path");
 const express = require("express");
 
+const MIN = 1;
+const MAX = 5;
 const app = express();
 
 function randomIntFromInterval(min, max) {
@@ -22,7 +24,7 @@ app.get("/assets/pollForData.js", function (_, res) {
 // this is the random robot generator
 app.get("/robots", (_, res) => {
   res.statusCode = 200;
-  if (randomIntFromInterval(1, 3) === 3) {
+  if (randomIntFromInterval(MIN, MAX) === MAX) {
     res.send({ done: true }); // we are sending JSON representation of this obj
   } else {
     const robot = `https://robohash.org/${Date.now()}`;
@@ -31,8 +33,11 @@ app.get("/robots", (_, res) => {
 });
 
 const port = process.env.PORT || 4000;
+
 const onListen = () => {
   console.log("Running on port " + port);
   console.log("connect to http://127.0.0.1:4000/");
 };
+
+// start the server and when ready, invoke onListen
 app.listen(port, onListen);

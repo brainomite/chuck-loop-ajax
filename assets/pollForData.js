@@ -12,55 +12,65 @@
  * @param {function} fDoneCallBack - a function that will be invoked if we see done === true
  */
 function pollForNewData(sURL, pollDelayInMS, fNewDataCallBack, fDoneCallBack) {
-  var request = new XMLHttpRequest();
-  //  request we will be doing
-  request.open("GET", sURL);
+  var request = new XMLHttpRequest(); //  request we will be doing
 
-  // callback when data is loaded
+  request.open("GET", sURL); // callback when data is loaded
+
   request.onload = function () {
-    // I assumed that the data is a JSON transmission, lets make it a native JS
-    // Object
+    // I assumed that the data is a JSON transmission, lets make it a native JS Object
     var responseObj = JSON.parse(request.responseText);
+
     if (responseObj.done === true) {
       // if done is true lets invoke the done callback
       fDoneCallBack();
     } else {
       // if its not done, lets invoke new data callback with the response object
       fNewDataCallBack(responseObj);
+
       // we want to run the process again! but wait pollDelayInMS milliseconds.
-      setTimeout(function () {
+      const runProcessAgain = function () {
         pollForNewData(sURL, pollDelayInMS, fNewDataCallBack, fDoneCallBack);
-      }, pollDelayInMS);
+      };
+
+      // setTimeout is a built in function for async callback after x ms
+      // it will invoke (notice i passed it in uninvoked) the runProcessAgain
+      // function see more here:
+      // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+      window.setTimeout(runProcessAgain, pollDelayInMS);
     }
-  };
-  // let kick off the process.
+  }; // let kick off the process.
+
   request.send();
 }
 
-const newDataCB = (response) => {
+var newDataCB = function newDataCB(response) {
   // this function does two things, it'll log the response obj to the
   // browser debugger tool and it'll append a new robot
   console.log(response);
   $("#robot-list").append(
-    `<li><img style="height: 10vh;" src="${response.robot}" alt="a robot"></li>`
+    '<li><img style="height: 10vh;" src="'.concat(
+      response.robot,
+      '" alt="a robot"></li>'
+    )
   );
 };
 
 // this done callback for sake of expediency just does a windows.alert
-const doneCB = () => window.alert("No more robots!");
+var doneCB = function doneCB() {
+  return window.alert("No more robots!");
+};
 
-$(document).ready(() => {
-  $("#button").click(() => {
-    const url = "http://127.0.0.1:4000/robots";
-
-    // here is the kickoff of the function you requested
-
+// this is invoked when the webpage is fully loaded
+$(document).ready(function () {
+  $("#button").click(function () {
+    var url = "http://127.0.0.1:4000/robots"; // here is the kickoff of the function you requested
     // url = url we are sending a 'GET' request to
     // 500 = MS i wanted to wait between polling
     // newDataCB = function that will be invoked (notice it isn't invoked now)
     //             when there is new robots and we aint done
     // doneCB = function (not invoked) that will be invoked when we
     //          receive from the server {"done": true}
+
     pollForNewData(url, 500, newDataCB, doneCB);
   });
 });

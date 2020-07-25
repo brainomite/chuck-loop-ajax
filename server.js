@@ -14,6 +14,11 @@ app.get("/", function (_, res) {
   res.sendFile(path.join(__dirname, "assets", "index.html"));
 });
 
+// this serves up index.html at path of '/'
+app.get("/assets/pollForData.js", function (_, res) {
+  res.sendFile(path.join(__dirname, "assets", "pollForData.js"));
+});
+
 // this is the random robot generator
 app.get("/robots", (_, res) => {
   res.statusCode = 200;
